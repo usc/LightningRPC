@@ -44,6 +44,7 @@ public class Netty4ClientFactory extends AbstractClientFactory {
     private static final ThreadFactory workerThreadFactory = new NamedThreadFactory("NETTYCLIENT-WORKER-");
 
     private static EventLoopGroup workerGroup = new EpollEventLoopGroup(PROCESSORS, workerThreadFactory);
+    // private static EventLoopGroup workerGroup = new NioEventLoopGroup(PROCESSORS, workerThreadFactory);
 
     private Netty4ClientFactory() {
         ;
@@ -58,6 +59,7 @@ public class Netty4ClientFactory extends AbstractClientFactory {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(workerGroup)
                 .channel(EpollSocketChannel.class)
+                // .channel(NioSocketChannel.class)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .option(ChannelOption.TCP_NODELAY, Boolean.parseBoolean(System.getProperty("nfs.rpc.tcp.nodelay", "true")))
                 .option(ChannelOption.SO_REUSEADDR,

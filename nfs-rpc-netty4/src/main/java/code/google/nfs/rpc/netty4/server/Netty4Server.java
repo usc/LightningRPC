@@ -49,10 +49,14 @@ public class Netty4Server implements Server {
         ThreadFactory serverWorkerTF = new NamedThreadFactory("NETTYSERVER-WORKER-");
         EventLoopGroup bossGroup = new EpollEventLoopGroup(PROCESSORS, serverBossTF);
         EpollEventLoopGroup workerGroup = new EpollEventLoopGroup(workerThreads > 0 ? workerThreads : PROCESSORS * 2, serverWorkerTF);
+        // EventLoopGroup bossGroup = new NioEventLoopGroup(PROCESSORS, serverBossTF);
+        // NioEventLoopGroup workerGroup = new NioEventLoopGroup(workerThreads > 0 ? workerThreads : PROCESSORS * 2, serverWorkerTF);
+
         workerGroup.setIoRatio(Integer.parseInt(System.getProperty("nfs.rpc.io.ratio", "80")));
         bootstrap = new ServerBootstrap();
         bootstrap.group(bossGroup, workerGroup)
                 .channel(EpollServerSocketChannel.class)
+                // .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .option(ChannelOption.SO_REUSEADDR, Boolean.parseBoolean(System.getProperty("nfs.rpc.tcp.reuseaddress", "true")))
