@@ -1,42 +1,35 @@
-package code.google.nfs.rpc.netty4.serialize;
+package code.google.nfs.rpc.netty.serialize;
+
 /**
  * nfs-rpc
  *   Apache License
  *   
  *   http://code.google.com/p/nfs-rpc (c) 2011
  */
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 
 import code.google.nfs.rpc.protocol.ByteBufferWrapper;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Implements ByteBufferWrapper based on Netty ChannelBuffer
  * 
- * @author <a href="mailto:coderplay@gmail.com">Min Zhou</a>
+ * @author <a href="mailto:bluedavy@gmail.com">bluedavy</a>
  */
-public class Netty4ByteBufferWrapper implements ByteBufferWrapper {
+public class NettyByteBufferWrapper implements ByteBufferWrapper {
 
-    private ByteBuf buffer;
+    private ChannelBuffer buffer;
 
-    private ChannelHandlerContext ctx;
-
-    public Netty4ByteBufferWrapper() {
+    public NettyByteBufferWrapper() {
         ;
     }
 
-    public Netty4ByteBufferWrapper(ByteBuf in) {
+    public NettyByteBufferWrapper(ChannelBuffer in) {
         buffer = in;
     }
 
-    public Netty4ByteBufferWrapper(ChannelHandlerContext ctx) {
-        this.ctx = ctx;
-    }
-
     public ByteBufferWrapper get(int capacity) {
-        if (buffer != null)
-            return this;
-        buffer = ctx.alloc().buffer(capacity);
+        buffer = ChannelBuffers.dynamicBuffer(capacity);
         return this;
     }
 
@@ -76,7 +69,7 @@ public class Netty4ByteBufferWrapper implements ByteBufferWrapper {
         buffer.writeInt(data);
     }
 
-    public ByteBuf getBuffer() {
+    public ChannelBuffer getBuffer() {
         return buffer;
     }
 

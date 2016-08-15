@@ -17,12 +17,12 @@ import code.google.nfs.rpc.netty4.client.Netty4ClientFactory;
  */
 public class Netty4SimpleBenchmarkClient extends AbstractSimpleProcessorBenchmarkClient {
 
-  public static void main(String[] args) throws Exception {
-    new Netty4SimpleBenchmarkClient().run(args);
-  }
+    public static void main(String[] args) throws Exception {
+        new Netty4SimpleBenchmarkClient().run(args);
+    }
 
-  public ClientFactory getClientFactory() {
-    return Netty4ClientFactory.getInstance();
-  }
+    public ClientFactory getClientFactory() {
+        return Netty4ClientFactory.getInstance();
+    }
 
 }

@@ -1,4 +1,4 @@
-package code.google.nfs.rpc.netty4.client;
+package code.google.nfs.rpc.netty.client;
 
 /**
  * nfs-rpc
@@ -6,27 +6,27 @@ package code.google.nfs.rpc.netty4.client;
  *   
  *   http://code.google.com/p/nfs-rpc (c) 2011
  */
+import java.net.InetSocketAddress;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
 
 import code.google.nfs.rpc.RequestWrapper;
 import code.google.nfs.rpc.ResponseWrapper;
 import code.google.nfs.rpc.client.AbstractClient;
 import code.google.nfs.rpc.client.Client;
 import code.google.nfs.rpc.client.ClientFactory;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.net.InetSocketAddress;
 
 /**
  * Netty Client
  * 
- * @author <a href="mailto:coderplay@gmail.com">Min Zhou</a>
+ * @author <a href="mailto:bluedavy@gmail.com">bluedavy</a>
  */
-public class Netty4Client extends AbstractClient {
+public class NettyClient extends AbstractClient {
 
-    private static final Log LOGGER = LogFactory.getLog(Netty4Client.class);
+    private static final Log LOGGER = LogFactory.getLog(NettyClient.class);
 
     private ChannelFuture cf;
 
@@ -34,7 +34,7 @@ public class Netty4Client extends AbstractClient {
 
     private int connectTimeout;
 
-    public Netty4Client(ChannelFuture cf, String key, int connectTimeout) {
+    public NettyClient(ChannelFuture cf, String key, int connectTimeout) {
         this.cf = cf;
         this.key = key;
         this.connectTimeout = connectTimeout;
@@ -44,7 +44,7 @@ public class Netty4Client extends AbstractClient {
             throws Exception {
         final long beginTime = System.currentTimeMillis();
         final Client self = this;
-        ChannelFuture writeFuture = cf.channel().writeAndFlush(wrapper);
+        ChannelFuture writeFuture = cf.getChannel().write(wrapper);
         // use listener to avoid wait for write & thread context switch
         writeFuture.addListener(new ChannelFutureListener() {
             public void operationComplete(ChannelFuture future)
@@ -60,18 +60,18 @@ public class Netty4Client extends AbstractClient {
                             + "),request id is:" + wrapper.getId();
                 }
                 if (future.isCancelled()) {
-                    errorMsg = "Send request to " + cf.channel().toString()
+                    errorMsg = "Send request to " + cf.getChannel().toString()
                             + " cancelled by user,request id is:"
                             + wrapper.getId();
                 }
                 if (!future.isSuccess()) {
-                    if (cf.channel().isOpen()) {
+                    if (cf.getChannel().isConnected()) {
                         // maybe some exception,so close the channel
-                        cf.channel().close();
+                        cf.getChannel().close();
                     } else {
-                        Netty4ClientFactory.getInstance().removeClient(key, self);
+                        NettyClientFactory.getInstance().removeClient(key, self);
                     }
-                    errorMsg = "Send request to " + cf.channel().toString() + " error" + future.cause();
+                    errorMsg = "Send request to " + cf.getChannel().toString() + " error" + future.getCause();
                 }
                 LOGGER.error(errorMsg);
                 ResponseWrapper response = new ResponseWrapper(wrapper.getId(), wrapper.getCodecType(), wrapper.getProtocolType());
@@ -82,11 +82,13 @@ public class Netty4Client extends AbstractClient {
     }
 
     public String getServerIP() {
-        return ((InetSocketAddress) cf.channel().remoteAddress()).getHostName();
+        return ((InetSocketAddress) cf.getChannel().getRemoteAddress())
+                .getHostName();
     }
 
     public int getServerPort() {
-        return ((InetSocketAddress) cf.channel().remoteAddress()).getPort();
+        return ((InetSocketAddress) cf.getChannel().getRemoteAddress())
+                .getPort();
     }
 
     public int getConnectTimeout() {
@@ -99,7 +101,7 @@ public class Netty4Client extends AbstractClient {
     }
 
     public ClientFactory getClientFactory() {
-        return Netty4ClientFactory.getInstance();
+        return NettyClientFactory.getInstance();
     }
 
 }
