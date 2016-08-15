@@ -3,7 +3,7 @@ package code.google.nfs.rpc.grizzly.server;
 /**
  * nfs-rpc
  *   Apache License
- *   
+ *
  *   http://code.google.com/p/nfs-rpc (c) 2011
  */
 import java.util.concurrent.ExecutorService;
@@ -25,7 +25,7 @@ import org.glassfish.grizzly.threadpool.GrizzlyExecutorService;
 
 /**
  * Grizzly Server
- * 
+ *
  * @author <a href="mailto:bluedavy@gmail.com">bluedavy</a>
  */
 public class GrizzlyServer implements Server {
@@ -41,7 +41,7 @@ public class GrizzlyServer implements Server {
                 .setPoolName("GRIZZLY-SERVER");
         ExecutorService executorService =
                 GrizzlyExecutorService.createInstance(config);
-        
+
         FilterChainBuilder filterChainBuilder = FilterChainBuilder.stateless();
         filterChainBuilder.add(new TransportFilter());
         filterChainBuilder.add(new GrizzlyProtocolFilter());
@@ -59,6 +59,7 @@ public class GrizzlyServer implements Server {
         LOGGER.warn("server started,listen at: " + listenPort);
     }
 
+    @SuppressWarnings("deprecation")
     public void stop() throws Exception {
         if (transport != null) {
             transport.stop();

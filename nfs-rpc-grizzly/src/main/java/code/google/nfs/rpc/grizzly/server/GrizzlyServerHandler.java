@@ -3,7 +3,7 @@ package code.google.nfs.rpc.grizzly.server;
 /**
  * nfs-rpc
  *   Apache License
- *   
+ *
  *   http://code.google.com/p/nfs-rpc (c) 2011
  */
 import java.io.IOException;
@@ -27,7 +27,7 @@ import org.glassfish.grizzly.EmptyCompletionHandler;
 
 /**
  * Grizzly Server Handler
- * 
+ *
  * @author <a href="mailto:bluedavy@gmail.com">bluedavy</a>
  */
 public class GrizzlyServerHandler extends BaseFilter {
@@ -39,7 +39,8 @@ public class GrizzlyServerHandler extends BaseFilter {
     public GrizzlyServerHandler(final ExecutorService threadPool) {
         this.threadPool = threadPool;
     }
-    
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public NextAction handleRead(final FilterChainContext ctx) throws IOException {
         final Object message = ctx.getMessage();
         final Connection connection = ctx.getConnection();
@@ -61,9 +62,9 @@ public class GrizzlyServerHandler extends BaseFilter {
 
         return ctx.getStopAction();
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	private void sendErrorResponse(final Connection connection, final RequestWrapper request) throws IOException {
+    private void sendErrorResponse(final Connection connection, final RequestWrapper request) throws IOException {
         ResponseWrapper responseWrapper = new ResponseWrapper(request.getId(), request.getCodecType(), request.getProtocolType());
         responseWrapper.setException(new Exception("server threadpool full,maybe because server is slow or too many requests"));
 
@@ -73,17 +74,18 @@ public class GrizzlyServerHandler extends BaseFilter {
             public void failed(Throwable throwable) {
                   LOGGER.error("server write response error,request id is: " + request.getId());
             }
-            
+
         });
     }
 
     class HandlerRunnable implements Runnable {
 
+        @SuppressWarnings("rawtypes")
         private final Connection connection;
         private final Object message;
         private final ExecutorService threadPool;
 
-        public HandlerRunnable(Connection connection,
+        public HandlerRunnable(@SuppressWarnings("rawtypes") Connection connection,
                 Object message,
                 ExecutorService threadPool) {
             this.connection = connection;
@@ -122,5 +124,5 @@ public class GrizzlyServerHandler extends BaseFilter {
             }
         }
     }
-    
+
 }

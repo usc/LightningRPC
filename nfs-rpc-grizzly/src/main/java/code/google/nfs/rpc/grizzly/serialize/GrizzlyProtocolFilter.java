@@ -3,33 +3,34 @@ package code.google.nfs.rpc.grizzly.serialize;
 /**
  * nfs-rpc
  *   Apache License
- *   
+ *
  *   http://code.google.com/p/nfs-rpc (c) 2011
  */
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.grizzly.Buffer;
+import org.glassfish.grizzly.Grizzly;
+import org.glassfish.grizzly.attributes.Attribute;
 import org.glassfish.grizzly.filterchain.BaseFilter;
 import org.glassfish.grizzly.filterchain.FilterChainContext;
 import org.glassfish.grizzly.filterchain.NextAction;
+import org.glassfish.grizzly.memory.CompositeBuffer;
 
 import code.google.nfs.rpc.protocol.ProtocolUtils;
-import java.util.ArrayList;
-import java.util.List;
-import org.glassfish.grizzly.Grizzly;
-import org.glassfish.grizzly.attributes.Attribute;
-import org.glassfish.grizzly.memory.CompositeBuffer;
 
 /**
  * Grizzly Protocol Decoder
- * 
+ *
  * @author <a href="mailto:bluedavy@gmail.com">bluedavy</a>
  */
 public class GrizzlyProtocolFilter extends BaseFilter {
 
     private static final Log LOGGER = LogFactory.getLog(GrizzlyProtocolFilter.class);
+    @SuppressWarnings("unused")
     private static final Attribute<CompositeBuffer> OUTPUT_BUFFER_ATTR =
             Grizzly.DEFAULT_ATTRIBUTE_BUILDER.createAttribute(
             "GrizzlyProtocolFilter.outputBuffer");
