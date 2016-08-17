@@ -6,17 +6,25 @@ package code.google.nfs.rpc.netty4.benchmark;
  *   http://code.google.com/p/nfs-rpc (c) 2011
  */
 
-import code.google.nfs.rpc.benchmark.*;
+import java.util.Date;
+
+import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
+import com.esotericsoftware.kryo.serializers.JavaSerializer;
+import com.google.protobuf.ByteString;
+
+import code.google.nfs.rpc.benchmark.AbstractBenchmarkServer;
+import code.google.nfs.rpc.benchmark.BenchmarkTestServiceImpl;
+import code.google.nfs.rpc.benchmark.KryoUtils;
+import code.google.nfs.rpc.benchmark.PB;
+import code.google.nfs.rpc.benchmark.PBBenchmarkTestServiceImpl;
+import code.google.nfs.rpc.benchmark.RequestObject;
+import code.google.nfs.rpc.benchmark.ResponseObject;
 import code.google.nfs.rpc.netty4.server.Netty4Server;
 import code.google.nfs.rpc.protocol.PBDecoder;
 import code.google.nfs.rpc.protocol.RPCProtocol;
 import code.google.nfs.rpc.protocol.SimpleProcessorProtocol;
 import code.google.nfs.rpc.server.Server;
 import code.google.nfs.rpc.server.ServerProcessor;
-import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
-import com.google.protobuf.ByteString;
-
-import java.util.Date;
 
 /**
  * Netty RPC Benchmark Server
@@ -61,8 +69,8 @@ public class Netty4BenchmarkServer extends AbstractBenchmarkServer {
         server.registerProcessor(RPCProtocol.TYPE, "testservice", new BenchmarkTestServiceImpl(responseSize));
         server.registerProcessor(RPCProtocol.TYPE, "testservicepb", new PBBenchmarkTestServiceImpl(responseSize));
         KryoUtils.registerClass(byte[].class, new DefaultArraySerializers.ByteArraySerializer(), 0);
-        KryoUtils.registerClass(RequestObject.class, new RequestObjectSerializer(), 1);
-        KryoUtils.registerClass(ResponseObject.class, new ResponseObjectSerializer(), 2);
+        KryoUtils.registerClass(RequestObject.class, new JavaSerializer(), 1);
+        KryoUtils.registerClass(ResponseObject.class, new JavaSerializer(), 2);
 
         server.start(listenPort, null);
     }

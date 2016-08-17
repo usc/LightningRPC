@@ -2,7 +2,7 @@ package code.google.nfs.rpc.benchmark;
 /**
  * nfs-rpc
  *   Apache License
- *   
+ *
  *   http://code.google.com/p/nfs-rpc (c) 2011
  */
 import java.text.SimpleDateFormat;
@@ -13,6 +13,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
+import com.esotericsoftware.kryo.serializers.JavaSerializer;
+import com.google.protobuf.ByteString;
+
 import code.google.nfs.rpc.NamedThreadFactory;
 import code.google.nfs.rpc.protocol.PBDecoder;
 import code.google.nfs.rpc.protocol.RPCProtocol;
@@ -20,21 +24,18 @@ import code.google.nfs.rpc.protocol.SimpleProcessorProtocol;
 import code.google.nfs.rpc.server.Server;
 import code.google.nfs.rpc.server.ServerProcessor;
 
-import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
-import com.google.protobuf.ByteString;
-
 
 /**
  * Abstract benchmark server
- * 
+ *
  * Usage: BenchmarkServer listenPort maxThreads responseSize
- * 
+ *
  * @author <a href="mailto:bluedavy@gmail.com">bluedavy</a>
  */
 public abstract class AbstractBenchmarkServer {
 
-	protected static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss");
+    protected static final SimpleDateFormat dateFormat = new SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss");
 
   public void run(String[] args) throws Exception {
     if (args == null || args.length != 3) {
@@ -68,8 +69,8 @@ public abstract class AbstractBenchmarkServer {
     server.registerProcessor(RPCProtocol.TYPE, "testservice", new BenchmarkTestServiceImpl(responseSize));
     server.registerProcessor(RPCProtocol.TYPE, "testservicepb", new PBBenchmarkTestServiceImpl(responseSize));
     KryoUtils.registerClass(byte[].class, new DefaultArraySerializers.ByteArraySerializer(), 0);
-    KryoUtils.registerClass(RequestObject.class, new RequestObjectSerializer(), 1);
-    KryoUtils.registerClass(ResponseObject.class, new ResponseObjectSerializer(), 2);
+    KryoUtils.registerClass(RequestObject.class, new JavaSerializer(), 1);
+    KryoUtils.registerClass(ResponseObject.class, new JavaSerializer(), 2);
 
     ThreadFactory tf = new NamedThreadFactory("BUSINESSTHREADPOOL");
     ExecutorService threadPool = new ThreadPoolExecutor(20, maxThreads,
@@ -78,8 +79,8 @@ public abstract class AbstractBenchmarkServer {
   }
 
   /**
-	 * Get server instance
-	 */
-	public abstract Server getServer();
+     * Get server instance
+     */
+    public abstract Server getServer();
 
 }
