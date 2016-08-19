@@ -18,7 +18,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 
 import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
-import com.esotericsoftware.kryo.serializers.JavaSerializer;
 
 import code.google.nfs.rpc.Codecs;
 import code.google.nfs.rpc.protocol.PBDecoder;
@@ -121,8 +120,8 @@ public abstract class AbstractBenchmarkClient {
         }
         if(codectype == Codecs.KRYO_CODEC){
             KryoUtils.registerClass(byte[].class, new DefaultArraySerializers.ByteArraySerializer(), 0);
-            KryoUtils.registerClass(RequestObject.class, new JavaSerializer(), 1);
-            KryoUtils.registerClass(ResponseObject.class, new JavaSerializer(), 2);
+            KryoUtils.registerClass(RequestObject.class, new RequestObjectSerializer(), 1);
+            KryoUtils.registerClass(ResponseObject.class, new ResponseObjectSerializer(), 2);
         }
         CyclicBarrier barrier = new CyclicBarrier(concurrents);
         CountDownLatch latch = new CountDownLatch(concurrents);

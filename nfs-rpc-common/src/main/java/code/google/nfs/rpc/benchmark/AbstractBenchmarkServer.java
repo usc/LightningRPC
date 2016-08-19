@@ -14,7 +14,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
-import com.esotericsoftware.kryo.serializers.JavaSerializer;
 import com.google.protobuf.ByteString;
 
 import code.google.nfs.rpc.NamedThreadFactory;
@@ -69,8 +68,8 @@ public abstract class AbstractBenchmarkServer {
     server.registerProcessor(RPCProtocol.TYPE, "testservice", new BenchmarkTestServiceImpl(responseSize));
     server.registerProcessor(RPCProtocol.TYPE, "testservicepb", new PBBenchmarkTestServiceImpl(responseSize));
     KryoUtils.registerClass(byte[].class, new DefaultArraySerializers.ByteArraySerializer(), 0);
-    KryoUtils.registerClass(RequestObject.class, new JavaSerializer(), 1);
-    KryoUtils.registerClass(ResponseObject.class, new JavaSerializer(), 2);
+    KryoUtils.registerClass(RequestObject.class, new RequestObjectSerializer(), 1);
+    KryoUtils.registerClass(ResponseObject.class, new ResponseObjectSerializer(), 2);
 
     ThreadFactory tf = new NamedThreadFactory("BUSINESSTHREADPOOL");
     ExecutorService threadPool = new ThreadPoolExecutor(20, maxThreads,

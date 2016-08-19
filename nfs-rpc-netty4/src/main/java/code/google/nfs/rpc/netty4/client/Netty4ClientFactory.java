@@ -24,9 +24,9 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 
 /**
  * Netty Client Factory,to create client based on netty4 API
@@ -43,8 +43,8 @@ public class Netty4ClientFactory extends AbstractClientFactory {
 
     private static final ThreadFactory workerThreadFactory = new NamedThreadFactory("NETTYCLIENT-WORKER-");
 
-    // private static EventLoopGroup workerGroup = new EpollEventLoopGroup(PROCESSORS, workerThreadFactory);
-    private static EventLoopGroup workerGroup = new NioEventLoopGroup(PROCESSORS, workerThreadFactory);
+    private static EventLoopGroup workerGroup = new EpollEventLoopGroup(PROCESSORS, workerThreadFactory);
+    // private static EventLoopGroup workerGroup = new NioEventLoopGroup(PROCESSORS, workerThreadFactory);
 
     private Netty4ClientFactory() {
         ;
@@ -58,8 +58,8 @@ public class Netty4ClientFactory extends AbstractClientFactory {
             int connectTimeout, String key) throws Exception {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(workerGroup)
-                // .channel(EpollSocketChannel.class)
-                .channel(NioSocketChannel.class)
+                .channel(EpollSocketChannel.class)
+                // .channel(NioSocketChannel.class)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .option(ChannelOption.TCP_NODELAY, Boolean.parseBoolean(System.getProperty("nfs.rpc.tcp.nodelay", "true")))
                 .option(ChannelOption.SO_REUSEADDR,
